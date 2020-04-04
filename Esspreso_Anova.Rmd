@@ -1,0 +1,87 @@
+---
+title: "R Notebook"
+author: "Abdul Hai Hazari"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+##install.packages("xlsx")
+##install.packages("readxl")
+##library("readxl")
+Esspreso_data = read.csv("C:/Users/abdul/Desktop/HU/ANLY_510_50/Class_3_ANOVA/EspressoData.csv")
+Esspreso_data
+# H0- There is no difference in Creme produced by three brew mehthods
+# H1 - There Occurs difference in Creme prouduction by different methods
+#install.packages("moments")
+library("moments")
+
+plot(density(Esspreso_data$cereme))
+qqnorm(Esspreso_data$cereme)
+agostino.test(Esspreso_data$cereme)  # Skewness Testing
+
+#As the p value is greater than 0.05, fail to reject Null Hypothesis
+shapiro.test(Esspreso_data$cereme)  ## Normality Testing
+
+## Independence of Observation
+
+head(Esspreso_data)
+Esspreso.lm = aov(Esspreso_data$cereme ~ Esspreso_data$brewmethod, data=Esspreso_data) 
+#Esspreso.lm
+
+Esspreso.res = resid(Esspreso.lm)
+#Esspreso.res
+
+plot(Esspreso_data$cereme, Esspreso.res, ylab="Residuals", xlab="group", main="Espresso_F_Test") 
+abline(0,0)
+
+
+#Variance Equality Test 
+# H0 -  the variance is the same for all groups
+
+bartlett.test(Esspreso_data$cereme, Esspreso_data$brewmethod,Esspreso_data)
+
+# The significance level value is considered 0.05 
+# here p Value is 0.6178 which is greater than the significance level of 0.05. i.e we can not reject the null hypothethis
+
+tapply(Esspreso_data$cereme, Esspreso_data$brewmethod,var)
+#Largest Variance/Smales Variance  ~1.9  which is <3 i.ie it is acceptable
+
+##applying One-way anova()
+
+model <- aov(cereme ~ brewmethod, Esspreso_data)
+summary(model)
+##install.packages('pgirmess')
+library("pgirmess")
+
+kruskalmc(cereme~brewmethod, data = Esspreso_data)
+
+#P value= 0.05 which signifies 2nd method makes more creme
+
+pairwise.t.test(Esspreso_data$cereme,Esspreso_data$brewmethod, paired = FALSE,p.adjust.method = "bonferroni")
+
+### While downloading the compute.es and pastecs, I found error so could not proceed further
+
+install.packages(compute.es)
+#install.packages(pastecs)
+#library(compute.es)
+#library(pastecs)
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
